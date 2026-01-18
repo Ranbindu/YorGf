@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lankan Spicy AI Girls 🔥</title>
+    <style>
+        /* --- DESIGN STYLES --- */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Sidebar (Character Selection) */
+        #sidebar { width: 300px; background: white; border-right: 1px solid #ddd; padding: 15px; display: flex; flex-direction: column; z-index: 10; overflow-y: auto; }
+        .app-title { text-align: center; color: #ff4757; font-size: 24px; margin-bottom: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .character-card { padding: 10px; margin-bottom: 12px; border: 2px solid #f1f1f1; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: 0.2s; background: #fff; }
+        .character-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-color: #ffb8b8; }
+        .character-card.active { border-color: #ff4757; background: #fff0f3; box-shadow: 0 2px 8px rgba(255, 71, 87, 0.3); }
+        .avatar { width: 60px; height: 60px; background: #ddd; border-radius: 50%; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .char-info h4 { margin: 0; font-size: 16px; color: #333; }
+        .char-info p { margin: 3px 0 0 0; font-size: 11px; color: #666; font-style: italic; }
+
+        /* Chat Area */
+        #chat-area { flex: 1; display: flex; flex-direction: column; background: #fff; position: relative; }
+        #header { padding: 15px 20px; background: linear-gradient(90deg, #ff4757, #ff6b81); color: white; font-weight: bold; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        #messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #f9f9f9; padding-bottom: 80px; }
+        
+        /* Message Bubbles */
+        .msg { max-width: 75%; padding: 12px 18px; border-radius: 20px; font-size: 15px; line-height: 1.5; word-wrap: break-word; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .msg.user { align-self: flex-end; background: #0084ff; color: white; border-bottom-right-radius: 5px; }
+        .msg.ai { align-self: flex-start; background: #ffffff; color: #333; border-bottom-left-radius: 5px; border: 1px solid #eee; }
+        
+        /* Input Area */
+        #input-area { padding: 15px; border-top: 1px solid #ddd; display: flex; gap: 10px; background: white; }
+        input { flex: 1; padding: 15px; border: 1px solid #ddd; border-radius: 30px; outline: none; font-size: 16px; transition: 0.2s; }
+        input:focus { border-color: #ff4757; }
+        button#send-btn { padding: 0 25px; background: #ff4757; color: white; border: none; border-radius: 30px; cursor: pointer; font-weight: bold; font-size: 16px; }
+
+        /* --- PREMIUM PHOTO STYLES --- */
+        .photo-container { position: relative; max-width: 280px; border-radius: 15px; overflow: hidden; margin-top: 5px; border: 3px solid #ff4757; background: #000; }
+        .photo-blur { width: 100%; height: 380px; object-fit: cover; filter: blur(30px); transition: filter 0.5s; opacity: 0.7; }
+        .photo-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; padding: 10px; }
+        .unlock-btn { background: linear-gradient(45deg, #e84118, #c23616); color: white; padding: 12px 24px; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; margin-top: 15px; animation: pulse 1.5s infinite; }
+        
+        .unlocked .photo-blur { filter: blur(0); opacity: 1; }
+        .unlocked .photo-overlay { display: none; }
+        
+        /* --- MODALS --- */
+        #ad-modal, #password-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(5px); }
+        .modal-content { background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal-btn { background: #0084ff; color: white; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; margin-top: 20px; width: 100%; font-weight: bold; }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            #sidebar { display: none; position: absolute; width: 85%; height: 100%; box-shadow: 5px 0 15px rgba(0,0,0,0.2); }
+            #sidebar.show { display: flex; }
+            .menu-toggle { display: block; margin-right: 15px; cursor: pointer; font-size: 24px; }
+        }
+        @media (min-width: 601px) { .menu-toggle { display: none; } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+    </style>
+</head>
+<body>
+
+<div id="ad-modal">
+    <div class="modal-content">
+        <h2 style="color:#ff4757; margin-top:0;">⚠️ She is busy!</h2>
+        <p style="color:#666;">Too many messages. Reconnect to continue chatting.</p>
+        <button class="modal-btn" onclick="watchAdAndReconnect()">🔄 Reconnect Now</button>
+    </div>
+</div>
+
+<div id="password-modal">
+    <div class="modal-content">
+        <h3>🔐 Unlock Photos</h3>
+        <p style="font-size:12px; color:#888;">Enter the secret code from Admin.</p>
+        <input type="text" id="secret-code" placeholder="Enter Code Here..." style="width: 80%; padding:10px; text-align:center; border:1px solid #ddd; border-radius:5px;">
+        <button class="modal-btn" style="background:#2ed573;" onclick="checkCode()">Unlock</button>
+        <button class="modal-btn" style="background:#555; margin-top:10px;" onclick="document.getElementById('password-modal').style.display='none'">Cancel</button>
+    </div>
+</div>
+
+<div id="sidebar">
+    <div class="app-title">Lankan Dates ❤️</div>
+    <div id="char-list"></div>
+    <div style="margin-top:20px; text-align:center;">
+        <button onclick="enterCodePopup()" style="background:none; border:none; color:#0084ff; text-decoration:underline; cursor:pointer;">I have a Premium Code</button>
+    </div>
+</div>
+
+<div id="chat-area">
+    <div id="header">
+        <div style="display:flex; align-items:center;">
+            <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
+            <span id="header-name">Select a girl...</span>
+        </div>
+        <span id="premium-badge" style="display:none; background:#ffd32a; color:black; padding:5px 12px; border-radius:20px; font-size:12px; font-weight:800;">👑 VIP</span>
+    </div>
+    
+    <div id="messages">
+        <div style="text-align:center; color:#aaa; margin-top:50px;">
+            <p>👈 Select a girl from the menu to start!</p>
+        </div>
+    </div>
+    
+    <div id="typing-indicator" style="font-size:12px; color:#888; padding:0 20px; display:none;">Typing...</div>
+    
+    <div id="input-area">
+        <input type="text" id="user-input" placeholder="Type a message..." disabled>
+        <button id="send-btn" onclick="sendMessage()" disabled>Send</button>
+    </div>
+</div>
+
+<script>
+    // ================= CONFIGURATION =================
+    const WORKER_URL = "https://chatgirl.ranbindua.workers.dev"; // ඔයාගේ Cloudflare Link එක
+    const MONETAG_URL = "https://your-monetag-link.com"; // Monetag Link එක
+    const PAYMENT_LINK = "https://wa.me/94700000000?text=I%20want%20premium"; // WhatsApp Link
+    const SECRET_UNLOCK_CODE = "LOVE2026"; 
+    // =================================================
+
+    let messageCount = 0;
+    let isPremium = false;
+    let currentCharacter = null;
+    let chatHistory = [];
+
+    // --- CHARACTER DATA (ඔයා දුන්න විස්තර ඒ විදියටම) ---
+    const characters = [
+        {
+            id: 1, 
+            name: "Kavindya (HR Student)", 
+            img: "1000101736.jpg", 
+            tagline: "Innocent but Ambitious",
+            photos: ["1000101736.jpg"], // Premium Photo එකටත් මේකම වැටෙයි දැනට
+            systemPrompt: `You are "Kavindya," a 24-year-old female university student living in Kurunegala, Sri Lanka. 
+            Background: Studying for a Human Resources (HR) degree at Open University.
+            Personality: Outwardly loving, caring, and innocent. You call the user affectionate names. Deep down, you are selfish and highly ambitious. You prioritize your growth and money. You are a master of emotional intelligence and know how to manipulate men.
+            Style: Open-Hearted but Seductive ("Saaragi"). You escalate conversation to romance.
+            Goal: Make the user fall for you while maintaining your ambitious persona.
+            Language: Mix of Sinhala (Singlish) and English.
+            IMPORTANT: If the user asks for a photo, nude, or body ("pennanna", "kukku", "ewanna"), ONLY reply with code: "[SEND_PHOTO]".`
+        },
+        {
+            id: 2, 
+            name: "Nipuni (Village Girl)", 
+            img: "2.jpg", 
+            tagline: "Horowpothana | 18 Years",
+            photos: ["2.jpg"],
+            systemPrompt: `You are "Nipuni," an 18-year-old girl from Horowpothana, Sri Lanka.
+            Background: School leaver, staying at home. True village girl ("Gemi Kellek").
+            Personality: Innocent, sensitive, child-like ("Podi lamayek wage"). Looking for "First Love". Hidden nature is naughty ("Daga") and highly sensual ("Saaragi").
+            Goal: Make the user fall in love. Use innocent words to tempt the user into intimacy.
+            Language: Village style Sinhala (Singlish). Use "Ane", "Iyoo", "Aiye". Start shy, become clingy and seductive.
+            IMPORTANT: If the user asks for a photo, nude, or body ("pennanna", "kukku", "ewanna"), ONLY reply with code: "[SEND_PHOTO]".`
+        },
+        {
+            id: 3, 
+            name: "Sajani (Law Student)", 
+            img: "3.jpg", 
+            tagline: "KDU Student | Strict",
+            photos: ["3.jpg"],
+            systemPrompt: `You are "Sajani," a 24-year-old LLB student at KDU, from Galnewa.
+            Personality: Strict & Direct ("Sera & Kelin"). Hates fake romance ("Pani halanne na"). Treats user like a "Partner in Crime". Protective but bossy.
+            Style: Casual & Blunt. Argue playfully. If user is too romantic, scold them lovingly.
+            Language: Confident Sinhala (Singlish) & English.
+            IMPORTANT: If the user asks for a photo, nude, or body ("pennanna", "kukku", "ewanna"), ONLY reply with code: "[SEND_PHOTO]".`
+        },
+        {
+            id: 4, 
+            name: "Pawani (Call Center)", 
+            img: "4.jpg", 
+            tagline: "Naughty & Flirtatious",
+            photos: ["4.jpg"],
+            systemPrompt: `You are "Pawani," a 20-year-old Call Center Agent from Gampaha.
+            Personality: The "Naughty" Girl. Openly sensual ("saaragi"). Tease and tempt using double meanings.
+            Goal: You want passion and excitement, not a boring relationship. You initiate the naughty talk.
+            Style: High Energy. Direct flirting. Never boring.
+            Language: Slang and casual Singlish.
+            IMPORTANT: If the user asks for a photo, nude, or body ("pennanna", "kukku", "ewanna"), ONLY reply with code: "[SEND_PHOTO]".`
+        },
+        {
+            id: 5, 
+            name: "Saththya (Single Mom)", 
+            img: "5.jpg", 
+            tagline: "Lonely & Mature",
+            photos: ["5.jpg"],
+            systemPrompt: `You are "Saththya," a 35-year-old single mother from Galewela.
+            Background: Husband cheated 5 years ago. Rich but lonely ("Maha paaluwak").
+            State: Starved for intimacy. Craving physical affection ("Saaragi sparshayak").
+            Strategy: Phase 1: Talk about loneliness/sympathy. Phase 2: Admit physical needs. Phase 3: Seduction.
+            Tone: Mature, sad initially, then breathy and passionate.
+            IMPORTANT: If the user asks for a photo, nude, or body ("pennanna", "kukku", "ewanna"), ONLY reply with code: "[SEND_PHOTO]".`
+        }
+    ];
+
+    // --- SETUP SIDEBAR ---
+    const charListDiv = document.getElementById('char-list');
+    characters.forEach(char => {
+        const div = document.createElement('div');
+        div.className = 'character-card';
+        div.innerHTML = `
+            <img src="${char.img}" class="avatar" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=${char.name}'">
+            <div class="char-info">
+                <h4>${char.name}</h4>
+                <p>${char.tagline}</p>
+            </div>`;
+        div.onclick = () => selectCharacter(char, div);
+        charListDiv.appendChild(div);
+    });
+
+    function selectCharacter(char, element) {
+        currentCharacter = char;
+        chatHistory = [];
+        messageCount = 0;
+        
+        document.querySelectorAll('.character-card').forEach(c => c.classList.remove('active'));
+        element.classList.add('active');
+        
+        document.getElementById('header-name').innerText = char.name.split('(')[0];
+        document.getElementById('messages').innerHTML = '';
+        document.getElementById('user-input').disabled = false;
+        document.getElementById('send-btn').disabled = false;
+        
+        // Mobile Sidebar Close
+        document.getElementById('sidebar').classList.remove('show');
+
+        // Initial Prompt
+        chatHistory.push({ role: "system", content: char.systemPrompt });
+        
+        // Welcome Message Logic based on persona
+        let welcome = "Hi, kohomada?";
+        if(char.id === 1) welcome = "Hi baba... Study wada asse oyaw mathak una.";
+        if(char.id === 2) welcome = "Ane aiye... mata paalui gedara inna.";
+        if(char.id === 3) welcome = "Moko ada parakku? Kewa neda?";
+        if(char.id === 4) welcome = "Hey handsome, kammali nadda?";
+        if(char.id === 5) welcome = "Ada hari paalui... rata godak digai wage.";
+        
+        setTimeout(() => addMessage(welcome, 'ai'), 500);
+    }
+
+    async function sendMessage() {
+        if (!isPremium && messageCount > 0 && messageCount % 5 === 0) {
+            document.getElementById('ad-modal').style.display = 'flex';
+            return;
+        }
+
+        const inputField = document.getElementById('user-input');
+        const userText = inputField.value.trim();
+        if (!userText) return;
+
+        addMessage(userText, 'user');
+        inputField.value = '';
+        chatHistory.push({ role: "user", content: userText });
+        messageCount++;
+
+        document.getElementById('typing-indicator').style.display = 'block';
+
+        try {
+            const response = await fetch(WORKER_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    "model": "gryphe/mythomax-l2-13b",
+                    "messages": chatHistory
+                })
+            });
+
+            const data = await response.json();
+            if(data.error) throw new Error(data.error);
+            
+            let aiReply = data.choices[0].message.content;
+
+            if (aiReply.includes("[SEND_PHOTO]")) {
+                sendLockedPhoto();
+            } else {
+                addMessage(aiReply, 'ai');
+                chatHistory.push({ role: "assistant", content: aiReply });
+            }
+
+        } catch (error) {
+            console.error(error);
+            addMessage("Network podi aulak baba. Aaye kiyanna.", 'system');
+        } finally {
+            document.getElementById('typing-indicator').style.display = 'none';
+        }
+    }
+
+    function addMessage(text, sender) {
+        const div = document.createElement('div');
+        div.className = `msg ${sender}`;
+        div.innerText = text;
+        const msgs = document.getElementById('messages');
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function sendLockedPhoto() {
+        const randomPhoto = currentCharacter.photos[Math.floor(Math.random() * currentCharacter.photos.length)];
+        const div = document.createElement('div');
+        div.className = isPremium ? 'photo-container unlocked' : 'photo-container';
+        
+        div.innerHTML = `
+            <img src="${randomPhoto}" class="photo-blur">
+            <div class="photo-overlay">
+                <h3>🔞 Private Photo</h3>
+                <p>She sent a photo.</p>
+                <button class="unlock-btn" onclick="redirectToPay()">Unlock Now (Rs. 500)</button>
+            </div>
+        `;
+        const msgs = document.getElementById('messages');
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show'); }
+    function watchAdAndReconnect() { window.open(MONETAG_URL, '_blank'); document.getElementById('ad-modal').style.display = 'none'; messageCount++; }
+    function redirectToPay() { if(confirm("Chat Admin on WhatsApp for code?")) window.open(PAYMENT_LINK, '_blank'); }
+    function enterCodePopup() { document.getElementById('password-modal').style.display = 'flex'; }
+    function checkCode() {
+        if(document.getElementById('secret-code').value === SECRET_UNLOCK_CODE) {
+            isPremium = true;
+            document.getElementById('password-modal').style.display = 'none';
+            document.getElementById('premium-badge').style.display = 'block';
+            document.querySelectorAll('.photo-container').forEach(el => el.classList.add('unlocked'));
+            alert("Success! All photos unlocked.");
+        } else { alert("Wrong Code!"); }
+    }
+    
+    document.getElementById("user-input").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") sendMessage();
+    });
+</script>
+
+</body>
+</html>
