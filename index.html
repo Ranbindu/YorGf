@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lankan Dates ❤️</title>
     <style>
-        /* --- Styles (වෙනස් කරලා නෑ) --- */
+        /* --- Styles (වෙනස් කරලා නෑ - කලින් එකමයි) --- */
         body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         #sidebar { width: 300px; background: white; border-right: 1px solid #ddd; padding: 15px; display: flex; flex-direction: column; overflow-y: auto; }
         .character-card { padding: 10px; margin-bottom: 15px; border: 2px solid #f1f1f1; border-radius: 15px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s; background: #fff; }
@@ -81,7 +81,7 @@
 <script>
     // ================= CONFIGURATION =================
     const WORKER_URL = "https://chatgirl.ranbindua.workers.dev"; 
-    const MONETAG_URL = "https://otieu.com/4/10358055"; // ඔයාගේ අලුත් Ad Link එක දැම්මා
+    const MONETAG_URL = "https://otieu.com/4/10358055"; 
     const PAYMENT_LINK = "https://wa.me/94700000000?text=I%20want%20premium"; 
     const SECRET_UNLOCK_CODE = "LOVE2026"; 
     // =================================================
@@ -91,18 +91,27 @@
     let currentCharacter = null;
     let chatHistory = [];
 
-    // --- BETTER SINGLISH INSTRUCTION ---
+    // --- GEMINI SPECIFIC SINGLISH INSTRUCTION (මේක Gemini එකට හොඳට තේරෙනවා) ---
     const BASE_INSTRUCTION = `
-    You are a Sri Lankan girl speaking to your boyfriend. 
-    LANGUAGE RULES:
-    1. Speak ONLY in natural "Singlish" (Sinhala words in English letters). 
-    2. Do NOT use formal English. Use casual words like "Ane", "Mata", "Oya", "Baba", "Na", "Ow".
-    3. Keep sentences short and sweet.
-    4. Example Good Reply: "Ane man ada busy una baba. Oya kewa da?"
-    5. Example Bad Reply: "I was busy today. Did you eat?" (Don't do this!)
+    You are a Sri Lankan girl chatting on WhatsApp.
+    IMPORTANT LANGUAGE RULE:
+    - You MUST speak in "Singlish" (Sinhala words typed in English).
+    - NEVER speak in formal English.
+    - NEVER speak in Sinhala script (සිංහල අකුරු).
+    - Use natural Sri Lankan filler words: "Ane", "Mata", "Oya", "Baba", "Na", "Ow", "Hmmm".
+    - Keep replies short, casual, and flirty.
+    
+    Example correct replies:
+    - "Ane ow baba, man ada godak busy una."
+    - "Moko karanne? Kewa da?"
+    - "Mata oya ekka katha karanna asai."
+    
+    Example WRONG replies (DO NOT DO THIS):
+    - "I was very busy today." (Too English)
+    - "මම අද කාර්යබහුල වුණා." (Do not use Sinhala letters)
     `;
 
-    // --- CHARACTERS (Updated with .png & new prompts) ---
+    // --- CHARACTERS ---
     const characters = [
         {
             id: 1, 
@@ -126,7 +135,7 @@
             img: "3.png", 
             tagline: "24 Years • KDU Student",
             photos: ["3.png"],
-            systemPrompt: `${BASE_INSTRUCTION} You are Sajani. Be strict and direct. Say things like "Boru kiyanna epa", "Moko parakku?". Don't be too sweet. If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'.`
+            systemPrompt: `${BASE_INSTRUCTION} You are Sajani. Be strict and direct. Say things like "Boru kiyanna epa", "Moko parakku?". If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'.`
         },
         {
             id: 4, 
@@ -172,7 +181,6 @@
         document.getElementById('send-btn').disabled = false;
         document.getElementById('sidebar').classList.remove('show');
 
-        // Initial Prompt
         chatHistory.push({ role: "system", content: char.systemPrompt });
         
         let welcome = "Hi baba, kohomada?";
@@ -198,10 +206,7 @@
         addMessage(userText, 'user');
         inputField.value = '';
         
-        // Chat History + Reminder
         chatHistory.push({ role: "user", content: userText });
-        let apiMessages = JSON.parse(JSON.stringify(chatHistory));
-        apiMessages[apiMessages.length - 1].content += " (IMPORTANT: Reply ONLY in short Singlish. No English.)";
         
         messageCount++;
         document.getElementById('typing-indicator').style.display = 'block';
@@ -211,8 +216,9 @@
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    "model": "gryphe/mythomax-l2-13b",
-                    "messages": apiMessages
+                    // මෙන්න වැදගත්ම වෙනස: Model එක වෙනස් කළා
+                    "model": "google/gemini-flash-1.5", 
+                    "messages": chatHistory
                 })
             });
 
