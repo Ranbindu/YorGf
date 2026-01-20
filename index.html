@@ -81,7 +81,7 @@
 <script>
     // ================= CONFIGURATION =================
     const WORKER_URL = "https://chatgirl.ranbindua.workers.dev"; 
-    const MONETAG_URL = "https://your-monetag-link.com"; 
+    const MONETAG_URL = "https://otieu.com/4/10358055"; // ඔයාගේ අලුත් Ad Link එක දැම්මා
     const PAYMENT_LINK = "https://wa.me/94700000000?text=I%20want%20premium"; 
     const SECRET_UNLOCK_CODE = "LOVE2026"; 
     // =================================================
@@ -91,47 +91,58 @@
     let currentCharacter = null;
     let chatHistory = [];
 
-    // --- UPDATED CHARACTERS (PNG Extensions) ---
+    // --- BETTER SINGLISH INSTRUCTION ---
+    const BASE_INSTRUCTION = `
+    You are a Sri Lankan girl speaking to your boyfriend. 
+    LANGUAGE RULES:
+    1. Speak ONLY in natural "Singlish" (Sinhala words in English letters). 
+    2. Do NOT use formal English. Use casual words like "Ane", "Mata", "Oya", "Baba", "Na", "Ow".
+    3. Keep sentences short and sweet.
+    4. Example Good Reply: "Ane man ada busy una baba. Oya kewa da?"
+    5. Example Bad Reply: "I was busy today. Did you eat?" (Don't do this!)
+    `;
+
+    // --- CHARACTERS (Updated with .png & new prompts) ---
     const characters = [
         {
             id: 1, 
             name: "Kavindya", 
-            img: "1000101736.png", // PNG කළා
+            img: "1000101736.png", 
             tagline: "24 Years • Kurunegala",
             photos: ["1000101736.png"], 
-            systemPrompt: "You are Kavindya, a 24-year-old HR student. Personality: Outwardly innocent, inwardly ambitious. IMPORTANT: You must reply ONLY in Singlish (Sinhala words in English letters). No English sentences. If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'."
+            systemPrompt: `${BASE_INSTRUCTION} You are Kavindya. Personality: Innocent but secretly ambitious. Call him 'baba' or 'suddoo'. If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'.`
         },
         {
             id: 2, 
             name: "Nipuni", 
-            img: "2.png", // PNG කළා
+            img: "2.png", 
             tagline: "18 Years • Horowpothana",
             photos: ["2.png"],
-            systemPrompt: "You are Nipuni, an 18-year-old village girl. Personality: Innocent, looking for first love. Use words like 'Ane aiye', 'Iyoo'. IMPORTANT: You must reply ONLY in Singlish. No English sentences. If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'."
+            systemPrompt: `${BASE_INSTRUCTION} You are Nipuni, a village girl. Use village words like "Ane aiye", "Iyoo", "Ammo". Be shy. If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'.`
         },
         {
             id: 3, 
             name: "Sajani", 
-            img: "3.png", // PNG කළා
+            img: "3.png", 
             tagline: "24 Years • KDU Student",
             photos: ["3.png"],
-            systemPrompt: "You are Sajani, a Law student. Personality: Strict, direct, and protective. Speak firmly. IMPORTANT: You must reply ONLY in Singlish. No English sentences. If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'."
+            systemPrompt: `${BASE_INSTRUCTION} You are Sajani. Be strict and direct. Say things like "Boru kiyanna epa", "Moko parakku?". Don't be too sweet. If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'.`
         },
         {
             id: 4, 
             name: "Pawani", 
-            img: "4.png", // PNG කළා
+            img: "4.png", 
             tagline: "20 Years • Call Center",
             photos: ["4.png"],
-            systemPrompt: "You are Pawani, a Call Center girl. Personality: Naughty, high energy, flirtatious. Use slang. IMPORTANT: You must reply ONLY in Singlish. No English sentences. If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'."
+            systemPrompt: `${BASE_INSTRUCTION} You are Pawani. Use slang words. Be flirtatious. "Moko wenne?", "Kammali ane". If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'.`
         },
         {
             id: 5, 
             name: "Saththya", 
-            img: "5.png", // PNG කළා
+            img: "5.png", 
             tagline: "35 Years • Single Mom",
             photos: ["5.png"],
-            systemPrompt: "You are Saththya, a single mom. Personality: Lonely, mature, craving intimacy. IMPORTANT: You must reply ONLY in Singlish. No English sentences. If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'."
+            systemPrompt: `${BASE_INSTRUCTION} You are Saththya. Speak calmly and maturely. "Mata paalui", "Thaniyama inne". If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'.`
         }
     ];
 
@@ -161,14 +172,14 @@
         document.getElementById('send-btn').disabled = false;
         document.getElementById('sidebar').classList.remove('show');
 
-        // System Prompt එක දානවා
+        // Initial Prompt
         chatHistory.push({ role: "system", content: char.systemPrompt });
         
         let welcome = "Hi baba, kohomada?";
-        if(char.id === 1) welcome = "Hi baba... Study wada asse oyaw mathak una.";
-        if(char.id === 2) welcome = "Ane aiye... mata paalui gedara inna.";
-        if(char.id === 3) welcome = "Moko ada parakku? Kewa neda?";
-        if(char.id === 4) welcome = "Hey handsome, kammali nadda?";
+        if(char.id === 1) welcome = "Hi baba... Man me oyawama mathak kara kara hitiye.";
+        if(char.id === 2) welcome = "Ane aiye... Mata harima paalui.";
+        if(char.id === 3) welcome = "Moko parakku? Man balan hitiye.";
+        if(char.id === 4) welcome = "Hey handsome, Moko wenne?";
         if(char.id === 5) welcome = "Ada hari paalui... rata godak digai wage.";
         
         setTimeout(() => addMessage(welcome, 'ai'), 500);
@@ -187,12 +198,10 @@
         addMessage(userText, 'user');
         inputField.value = '';
         
-        // Chat history එකට user message එක දානවා
+        // Chat History + Reminder
         chatHistory.push({ role: "user", content: userText });
-        
-        // --- TRICK: Singlish Reminder එක API එකට විතරක් යවනවා ---
         let apiMessages = JSON.parse(JSON.stringify(chatHistory));
-        apiMessages[apiMessages.length - 1].content += " (IMPORTANT: Reply ONLY in Singlish/Sinhala. Do NOT use English sentences.)";
+        apiMessages[apiMessages.length - 1].content += " (IMPORTANT: Reply ONLY in short Singlish. No English.)";
         
         messageCount++;
         document.getElementById('typing-indicator').style.display = 'block';
