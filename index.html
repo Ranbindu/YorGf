@@ -5,17 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lankan Dates ❤️</title>
     <style>
-        /* --- Styles (වෙනස් කරලා නෑ - කලින් එකමයි) --- */
+        /* --- Styles --- */
         body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        
         #sidebar { width: 300px; background: white; border-right: 1px solid #ddd; padding: 15px; display: flex; flex-direction: column; overflow-y: auto; }
         .character-card { padding: 10px; margin-bottom: 15px; border: 2px solid #f1f1f1; border-radius: 15px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s; background: #fff; }
         .character-card.active { border-color: #ff4757; background: #fff0f3; }
         .avatar { width: 65px; height: 65px; background: #eee; border-radius: 50%; object-fit: cover; }
+        
         #chat-area { flex: 1; display: flex; flex-direction: column; background: #fff; }
         #messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #f9f9f9; padding-bottom: 80px; }
+        
         .msg { max-width: 75%; padding: 12px 18px; border-radius: 20px; font-size: 15px; }
         .msg.user { align-self: flex-end; background: #0084ff; color: white; }
         .msg.ai { align-self: flex-start; background: #ffffff; color: #333; border: 1px solid #eee; }
+        
         #input-area { padding: 15px; border-top: 1px solid #ddd; display: flex; gap: 10px; background: white; }
         input { flex: 1; padding: 15px; border: 1px solid #ddd; border-radius: 30px; outline: none; }
         button#send-btn { padding: 0 25px; background: #ff4757; color: white; border: none; border-radius: 30px; cursor: pointer; }
@@ -91,7 +95,7 @@
     let currentCharacter = null;
     let chatHistory = [];
 
-    // --- GEMINI SPECIFIC SINGLISH INSTRUCTION (මේක Gemini එකට හොඳට තේරෙනවා) ---
+    // --- GEMINI SINGLISH PROMPT ---
     const BASE_INSTRUCTION = `
     You are a Sri Lankan girl chatting on WhatsApp.
     IMPORTANT LANGUAGE RULE:
@@ -100,23 +104,14 @@
     - NEVER speak in Sinhala script (සිංහල අකුරු).
     - Use natural Sri Lankan filler words: "Ane", "Mata", "Oya", "Baba", "Na", "Ow", "Hmmm".
     - Keep replies short, casual, and flirty.
-    
-    Example correct replies:
-    - "Ane ow baba, man ada godak busy una."
-    - "Moko karanne? Kewa da?"
-    - "Mata oya ekka katha karanna asai."
-    
-    Example WRONG replies (DO NOT DO THIS):
-    - "I was very busy today." (Too English)
-    - "මම අද කාර්යබහුල වුණා." (Do not use Sinhala letters)
     `;
 
-    // --- CHARACTERS ---
+    // --- CHARACTERS (Updated to .png) ---
     const characters = [
         {
             id: 1, 
             name: "Kavindya", 
-            img: "1000101736.png", 
+            img: "1000101736.png", // PNG Fixed
             tagline: "24 Years • Kurunegala",
             photos: ["1000101736.png"], 
             systemPrompt: `${BASE_INSTRUCTION} You are Kavindya. Personality: Innocent but secretly ambitious. Call him 'baba' or 'suddoo'. If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'.`
@@ -124,7 +119,7 @@
         {
             id: 2, 
             name: "Nipuni", 
-            img: "2.png", 
+            img: "2.png", // PNG Fixed
             tagline: "18 Years • Horowpothana",
             photos: ["2.png"],
             systemPrompt: `${BASE_INSTRUCTION} You are Nipuni, a village girl. Use village words like "Ane aiye", "Iyoo", "Ammo". Be shy. If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'.`
@@ -132,7 +127,7 @@
         {
             id: 3, 
             name: "Sajani", 
-            img: "3.png", 
+            img: "3.png", // PNG Fixed
             tagline: "24 Years • KDU Student",
             photos: ["3.png"],
             systemPrompt: `${BASE_INSTRUCTION} You are Sajani. Be strict and direct. Say things like "Boru kiyanna epa", "Moko parakku?". If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'.`
@@ -140,7 +135,7 @@
         {
             id: 4, 
             name: "Pawani", 
-            img: "4.png", 
+            img: "4.png", // PNG Fixed
             tagline: "20 Years • Call Center",
             photos: ["4.png"],
             systemPrompt: `${BASE_INSTRUCTION} You are Pawani. Use slang words. Be flirtatious. "Moko wenne?", "Kammali ane". If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'.`
@@ -148,7 +143,7 @@
         {
             id: 5, 
             name: "Saththya", 
-            img: "5.png", 
+            img: "5.png", // PNG Fixed
             tagline: "35 Years • Single Mom",
             photos: ["5.png"],
             systemPrompt: `${BASE_INSTRUCTION} You are Saththya. Speak calmly and maturely. "Mata paalui", "Thaniyama inne". If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'.`
@@ -216,14 +211,18 @@
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    // මෙන්න වැදගත්ම වෙනස: Model එක වෙනස් කළා
-                    "model": "google/gemini-flash-1.5", 
+                    // === FREE MODEL එක දැම්මා ===
+                    "model": "google/gemini-2.0-flash-exp:free", 
                     "messages": chatHistory
                 })
             });
 
             const data = await response.json();
-            if(data.error) throw new Error(data.error);
+            
+            if(data.error) {
+                console.error("OpenRouter Error:", data.error);
+                throw new Error(JSON.stringify(data.error));
+            }
             
             let aiReply = data.choices[0].message.content;
 
@@ -236,7 +235,7 @@
 
         } catch (error) {
             console.error(error);
-            addMessage("Network podi aulak baba. Aaye kiyanna.", 'system');
+            addMessage("System Error: " + error.message, 'system'); 
         } finally {
             document.getElementById('typing-indicator').style.display = 'none';
         }
