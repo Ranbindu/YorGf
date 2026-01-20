@@ -5,72 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lankan Dates ❤️</title>
     <style>
-        /* --- DESIGN STYLES --- */
+        /* --- Styles (වෙනස් කරලා නෑ) --- */
         body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        
-        /* Sidebar Styles */
         #sidebar { width: 300px; background: white; border-right: 1px solid #ddd; padding: 15px; display: flex; flex-direction: column; overflow-y: auto; }
-        .app-title { text-align: center; color: #ff4757; font-size: 24px; margin-bottom: 25px; font-weight: 800; letter-spacing: 1px; }
-        
         .character-card { padding: 10px; margin-bottom: 15px; border: 2px solid #f1f1f1; border-radius: 15px; cursor: pointer; display: flex; align-items: center; gap: 15px; transition: 0.2s; background: #fff; }
-        .character-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-color: #ffb8b8; }
-        .character-card.active { border-color: #ff4757; background: #fff0f3; box-shadow: 0 4px 12px rgba(255, 71, 87, 0.2); }
-        
-        /* Photo Styles (රවුම් හැඩය සහ ප්‍රමාණය) */
-        .avatar { 
-            width: 65px; 
-            height: 65px; 
-            background: #eee; 
-            border-radius: 50%; 
-            object-fit: cover; 
-            border: 2px solid #fff; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
-        }
-        
-        .char-info h4 { margin: 0; font-size: 16px; color: #333; font-weight: 700; }
-        .char-info p { margin: 4px 0 0 0; font-size: 12px; color: #777; }
-
-        /* Chat Area */
-        #chat-area { flex: 1; display: flex; flex-direction: column; background: #fff; position: relative; }
-        #header { padding: 15px 20px; background: linear-gradient(90deg, #ff4757, #ff6b81); color: white; font-weight: bold; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .character-card.active { border-color: #ff4757; background: #fff0f3; }
+        .avatar { width: 65px; height: 65px; background: #eee; border-radius: 50%; object-fit: cover; }
+        #chat-area { flex: 1; display: flex; flex-direction: column; background: #fff; }
         #messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #f9f9f9; padding-bottom: 80px; }
-        
-        .msg { max-width: 75%; padding: 12px 18px; border-radius: 20px; font-size: 15px; line-height: 1.5; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .msg.user { align-self: flex-end; background: #0084ff; color: white; border-bottom-right-radius: 5px; }
-        .msg.ai { align-self: flex-start; background: #ffffff; color: #333; border-bottom-left-radius: 5px; border: 1px solid #eee; }
-
-        /* Input Area */
+        .msg { max-width: 75%; padding: 12px 18px; border-radius: 20px; font-size: 15px; }
+        .msg.user { align-self: flex-end; background: #0084ff; color: white; }
+        .msg.ai { align-self: flex-start; background: #ffffff; color: #333; border: 1px solid #eee; }
         #input-area { padding: 15px; border-top: 1px solid #ddd; display: flex; gap: 10px; background: white; }
-        input { flex: 1; padding: 15px; border: 1px solid #ddd; border-radius: 30px; outline: none; font-size: 16px; }
-        button#send-btn { padding: 0 25px; background: #ff4757; color: white; border: none; border-radius: 30px; cursor: pointer; font-weight: bold; }
-
-        /* Premium Photos */
+        input { flex: 1; padding: 15px; border: 1px solid #ddd; border-radius: 30px; outline: none; }
+        button#send-btn { padding: 0 25px; background: #ff4757; color: white; border: none; border-radius: 30px; cursor: pointer; }
+        
+        /* Premium Photo Styles */
         .photo-container { position: relative; max-width: 280px; border-radius: 15px; overflow: hidden; margin-top: 5px; border: 3px solid #ff4757; background: #000; }
         .photo-blur { width: 100%; height: 380px; object-fit: cover; filter: blur(30px); opacity: 0.7; }
         .photo-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; }
-        .unlock-btn { background: linear-gradient(45deg, #e84118, #c23616); color: white; padding: 12px 24px; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; margin-top: 15px; }
         .unlocked .photo-blur { filter: blur(0); opacity: 1; }
         .unlocked .photo-overlay { display: none; }
-
+        
         /* Modals */
-        #ad-modal, #password-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(5px); }
-        .modal-content { background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .modal-btn { background: #0084ff; color: white; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; margin-top: 20px; width: 100%; font-weight: bold; }
-
-        @media (max-width: 600px) {
-            #sidebar { display: none; position: absolute; width: 85%; height: 100%; box-shadow: 5px 0 15px rgba(0,0,0,0.2); }
-            #sidebar.show { display: flex; }
-            .menu-toggle { display: block; margin-right: 15px; cursor: pointer; font-size: 24px; }
-        }
-        @media (min-width: 601px) { .menu-toggle { display: none; } }
+        #ad-modal, #password-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 9999; }
+        .modal-content { background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 320px; }
+        .modal-btn { background: #0084ff; color: white; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; margin-top: 20px; width: 100%; }
+        
+        @media (max-width: 600px) { #sidebar { display: none; position: absolute; width: 85%; height: 100%; } #sidebar.show { display: flex; } }
     </style>
 </head>
 <body>
 
 <div id="ad-modal">
     <div class="modal-content">
-        <h2 style="color:#ff4757; margin-top:0;">⚠️ She is busy!</h2>
-        <p style="color:#666;">Too many messages. Reconnect to continue chatting.</p>
+        <h2 style="color:#ff4757;">⚠️ She is busy!</h2>
+        <p>Too many messages. Reconnect to continue chatting.</p>
         <button class="modal-btn" onclick="watchAdAndReconnect()">🔄 Reconnect Now</button>
     </div>
 </div>
@@ -78,14 +48,14 @@
 <div id="password-modal">
     <div class="modal-content">
         <h3>🔐 Unlock Photos</h3>
-        <input type="text" id="secret-code" placeholder="Enter Code Here..." style="width: 80%; padding:10px; text-align:center; border:1px solid #ddd; border-radius:5px;">
+        <input type="text" id="secret-code" placeholder="Enter Code Here..." style="width: 80%; padding:10px; text-align:center; border:1px solid #ddd;">
         <button class="modal-btn" style="background:#2ed573;" onclick="checkCode()">Unlock</button>
         <button class="modal-btn" style="background:#555; margin-top:10px;" onclick="document.getElementById('password-modal').style.display='none'">Cancel</button>
     </div>
 </div>
 
 <div id="sidebar">
-    <div class="app-title">Lankan Dates ❤️</div>
+    <h3 style="text-align:center; color:#ff4757;">Lankan Dates ❤️</h3>
     <div id="char-list"></div>
     <div style="margin-top:20px; text-align:center;">
         <button onclick="enterCodePopup()" style="background:none; border:none; color:#0084ff; text-decoration:underline; cursor:pointer;">I have a Premium Code</button>
@@ -93,22 +63,15 @@
 </div>
 
 <div id="chat-area">
-    <div id="header">
+    <div id="header" style="padding: 15px; background: linear-gradient(90deg, #ff4757, #ff6b81); color: white; display: flex; justify-content: space-between; align-items: center;">
         <div style="display:flex; align-items:center;">
-            <div class="menu-toggle" onclick="toggleSidebar()">☰</div>
+            <div onclick="document.getElementById('sidebar').classList.toggle('show')" style="margin-right:15px; cursor:pointer; font-size:24px;">☰</div>
             <span id="header-name">Select a girl...</span>
         </div>
         <span id="premium-badge" style="display:none; background:#ffd32a; color:black; padding:5px 12px; border-radius:20px; font-size:12px; font-weight:800;">👑 VIP</span>
     </div>
-    
-    <div id="messages">
-        <div style="text-align:center; color:#aaa; margin-top:50px;">
-            <p>👈 Select a girl to start chatting!</p>
-        </div>
-    </div>
-    
+    <div id="messages"></div>
     <div id="typing-indicator" style="font-size:12px; color:#888; padding:0 20px; display:none;">Typing...</div>
-    
     <div id="input-area">
         <input type="text" id="user-input" placeholder="Type a message..." disabled>
         <button id="send-btn" onclick="sendMessage()" disabled>Send</button>
@@ -128,81 +91,59 @@
     let currentCharacter = null;
     let chatHistory = [];
 
-    // --- CHARACTER DATA (ඔයාගේ ෆොටෝ නම් සහ හරි නම් එක්ක) ---
+    // --- UPDATED CHARACTERS (PNG Extensions) ---
     const characters = [
         {
             id: 1, 
-            name: "Kavindya",  // නම විතරයි
-            img: "1000101736.jpg", // ඔයා එවපු ඔරිජිනල් ෆොටෝ එක
+            name: "Kavindya", 
+            img: "1000101736.png", // PNG කළා
             tagline: "24 Years • Kurunegala",
-            photos: ["1000101736.jpg"], 
-            systemPrompt: `You are Kavindya. 
-            LANGUAGE RULE: Speak ONLY in "Singlish" (Sinhala words in English letters). Do not speak formal English.
-            Example: "Ane man ada busy una baba", "Oya kewa da?", "Mata paalui".
-            Personality: You are an HR student. Outwardly innocent, inwardly ambitious.
-            IMPORTANT: If asked for a photo/nude/kukku, reply EXACTLY: "[SEND_PHOTO]".`
+            photos: ["1000101736.png"], 
+            systemPrompt: "You are Kavindya, a 24-year-old HR student. Personality: Outwardly innocent, inwardly ambitious. IMPORTANT: You must reply ONLY in Singlish (Sinhala words in English letters). No English sentences. If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'."
         },
         {
             id: 2, 
             name: "Nipuni", 
-            img: "2.jpg", 
+            img: "2.png", // PNG කළා
             tagline: "18 Years • Horowpothana",
-            photos: ["2.jpg"],
-            systemPrompt: `You are Nipuni. 
-            LANGUAGE RULE: Speak ONLY in "Singlish". Use village words like "Ane", "Iyoo", "Aiye".
-            Example: "Ane aiye mata bayai", "Amma baninawa", "Oya hari narakai".
-            Personality: Innocent village girl, looking for first love.
-            IMPORTANT: If asked for a photo/nude/kukku, reply EXACTLY: "[SEND_PHOTO]".`
+            photos: ["2.png"],
+            systemPrompt: "You are Nipuni, an 18-year-old village girl. Personality: Innocent, looking for first love. Use words like 'Ane aiye', 'Iyoo'. IMPORTANT: You must reply ONLY in Singlish. No English sentences. If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'."
         },
         {
             id: 3, 
             name: "Sajani", 
-            img: "3.jpg", 
+            img: "3.png", // PNG කළා
             tagline: "24 Years • KDU Student",
-            photos: ["3.jpg"],
-            systemPrompt: `You are Sajani. 
-            LANGUAGE RULE: Speak ONLY in "Singlish". Be strict and direct.
-            Example: "Boru kiyanna epa oya", "Moko parakku?", "Kewada kiyala kiyanna".
-            Personality: Law student. Strict, hates lies. Protective but bossy.
-            IMPORTANT: If asked for a photo/nude/kukku, reply EXACTLY: "[SEND_PHOTO]".`
+            photos: ["3.png"],
+            systemPrompt: "You are Sajani, a Law student. Personality: Strict, direct, and protective. Speak firmly. IMPORTANT: You must reply ONLY in Singlish. No English sentences. If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'."
         },
         {
             id: 4, 
             name: "Pawani", 
-            img: "4.jpg", 
+            img: "4.png", // PNG කළා
             tagline: "20 Years • Call Center",
-            photos: ["4.jpg"],
-            systemPrompt: `You are Pawani. 
-            LANGUAGE RULE: Speak ONLY in "Singlish". Use slang and flirtatious words.
-            Example: "Moko wenne handsome?", "Ada reta free da?", "Kammali ane".
-            Personality: Naughty, flirtatious, high energy.
-            IMPORTANT: If asked for a photo/nude/kukku, reply EXACTLY: "[SEND_PHOTO]".`
+            photos: ["4.png"],
+            systemPrompt: "You are Pawani, a Call Center girl. Personality: Naughty, high energy, flirtatious. Use slang. IMPORTANT: You must reply ONLY in Singlish. No English sentences. If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'."
         },
         {
             id: 5, 
             name: "Saththya", 
-            img: "5.jpg", 
+            img: "5.png", // PNG කළා
             tagline: "35 Years • Single Mom",
-            photos: ["5.jpg"],
-            systemPrompt: `You are Saththya. 
-            LANGUAGE RULE: Speak ONLY in "Singlish". Talk like a mature woman.
-            Example: "Mata den thanikama purudui", "Oya wage kenek labenna pin karanna oni", "Rata hari paalui".
-            Personality: Single mom, lonely, craving intimacy.
-            IMPORTANT: If asked for a photo/nude/kukku, reply EXACTLY: "[SEND_PHOTO]".`
+            photos: ["5.png"],
+            systemPrompt: "You are Saththya, a single mom. Personality: Lonely, mature, craving intimacy. IMPORTANT: You must reply ONLY in Singlish. No English sentences. If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'."
         }
     ];
 
-    // --- SETUP SIDEBAR ---
     const charListDiv = document.getElementById('char-list');
     characters.forEach(char => {
         const div = document.createElement('div');
         div.className = 'character-card';
-        // ෆොටෝ එක Load වෙන්නේ නැත්නම් Placeholder එකක් දාන්න හදල තියෙන්නේ
         div.innerHTML = `
             <img src="${char.img}" class="avatar" onerror="this.src='https://ui-avatars.com/api/?name=${char.name}&background=random'">
-            <div class="char-info">
-                <h4>${char.name}</h4>
-                <p>${char.tagline}</p>
+            <div style="flex:1;">
+                <h4 style="margin:0;">${char.name}</h4>
+                <p style="margin:0; font-size:12px; color:#666;">${char.tagline}</p>
             </div>`;
         div.onclick = () => selectCharacter(char, div);
         charListDiv.appendChild(div);
@@ -212,22 +153,18 @@
         currentCharacter = char;
         chatHistory = [];
         messageCount = 0;
-        
         document.querySelectorAll('.character-card').forEach(c => c.classList.remove('active'));
         element.classList.add('active');
-        
         document.getElementById('header-name').innerText = char.name;
         document.getElementById('messages').innerHTML = '';
         document.getElementById('user-input').disabled = false;
         document.getElementById('send-btn').disabled = false;
-        
         document.getElementById('sidebar').classList.remove('show');
 
-        // System Prompt එක යවනවා (Singlish Force කරමින්)
+        // System Prompt එක දානවා
         chatHistory.push({ role: "system", content: char.systemPrompt });
         
-        // Welcome Message (සිංහලෙන්)
-        let welcome = "Hi, kohomada?";
+        let welcome = "Hi baba, kohomada?";
         if(char.id === 1) welcome = "Hi baba... Study wada asse oyaw mathak una.";
         if(char.id === 2) welcome = "Ane aiye... mata paalui gedara inna.";
         if(char.id === 3) welcome = "Moko ada parakku? Kewa neda?";
@@ -249,9 +186,15 @@
 
         addMessage(userText, 'user');
         inputField.value = '';
+        
+        // Chat history එකට user message එක දානවා
         chatHistory.push({ role: "user", content: userText });
+        
+        // --- TRICK: Singlish Reminder එක API එකට විතරක් යවනවා ---
+        let apiMessages = JSON.parse(JSON.stringify(chatHistory));
+        apiMessages[apiMessages.length - 1].content += " (IMPORTANT: Reply ONLY in Singlish/Sinhala. Do NOT use English sentences.)";
+        
         messageCount++;
-
         document.getElementById('typing-indicator').style.display = 'block';
 
         try {
@@ -260,7 +203,7 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     "model": "gryphe/mythomax-l2-13b",
-                    "messages": chatHistory
+                    "messages": apiMessages
                 })
             });
 
@@ -311,7 +254,6 @@
         msgs.scrollTop = msgs.scrollHeight;
     }
 
-    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show'); }
     function watchAdAndReconnect() { window.open(MONETAG_URL, '_blank'); document.getElementById('ad-modal').style.display = 'none'; messageCount++; }
     function redirectToPay() { if(confirm("Chat Admin on WhatsApp for code?")) window.open(PAYMENT_LINK, '_blank'); }
     function enterCodePopup() { document.getElementById('password-modal').style.display = 'flex'; }
