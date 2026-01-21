@@ -2,111 +2,120 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
     <title>Lankan Dates ❤️</title>
     <style>
-        /* --- MOBILE OPTIMIZED STYLES --- */
-        * { box-sizing: border-box; }
+        /* --- WHATSAPP MOBILE STYLE --- */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background-color: #f0f2f5; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #e5ddd5; 
             margin: 0; 
             padding: 0;
             display: flex; 
-            height: 100dvh; /* Mobile වලට හරියනම උස */
+            flex-direction: column;
+            height: 100dvh; /* Dynamic Height for Mobile */
             overflow: hidden; 
         }
-        
-        /* Sidebar (Desktop Mode) */
+
+        /* Sidebar (Hidden by default on mobile) */
         #sidebar { 
-            width: 300px; 
+            position: absolute;
+            left: -100%;
+            top: 0;
+            bottom: 0;
+            width: 80%; 
+            max-width: 300px;
             background: white; 
-            border-right: 1px solid #ddd; 
-            display: flex; 
-            flex-direction: column; 
-            z-index: 100;
-            height: 100%;
+            z-index: 1000;
+            transition: 0.3s;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
         }
+        #sidebar.show { left: 0; }
+        #overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:900; }
 
-        /* Mobile Sidebar Overlay */
-        @media (max-width: 600px) {
-            #sidebar { 
-                display: none; 
-                position: absolute; 
-                width: 85%; 
-                height: 100%; 
-                box-shadow: 5px 0 15px rgba(0,0,0,0.2); 
-            }
-            #sidebar.show { display: flex; }
-        }
-
-        .header-title { text-align: center; color: #ff4757; font-size: 22px; margin: 15px 0; font-weight: 800; letter-spacing: 1px; }
-        
-        /* Character List */
-        #char-list { flex: 1; overflow-y: auto; padding: 10px; }
-        
-        .character-card { 
-            padding: 10px; 
-            margin-bottom: 12px; 
-            border: 1px solid #eee; 
-            border-radius: 12px; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-            background: #fff; 
-            transition: 0.2s;
-        }
-        .character-card.active { border: 2px solid #ff4757; background: #fff0f3; }
-        .avatar { width: 55px; height: 55px; background: #eee; border-radius: 50%; object-fit: cover; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        
-        /* Main Chat Area */
-        #chat-area { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            background: #e5ddd5; /* WhatsApp වගේ background පාටක් */
-            position: relative; 
-            height: 100%;
-        }
-
+        /* Header */
         #header { 
-            padding: 15px; 
-            background: #ff4757; 
+            padding: 0 15px; 
+            background: #008069; /* WhatsApp Green */
             color: white; 
             display: flex; 
-            justify-content: space-between; 
             align-items: center; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            gap: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
             z-index: 10;
+            height: 60px;
+            flex-shrink: 0;
         }
-        
+
+        .menu-btn { font-size: 24px; cursor: pointer; }
+        .profile-pic { width: 40px; height: 40px; border-radius: 50%; background: #ccc; object-fit: cover; border: 1px solid white; }
+        .header-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .header-name { font-weight: bold; font-size: 16px; line-height: 1.2; }
+        .header-status { font-size: 12px; opacity: 0.8; }
+
+        /* Messages Area */
         #messages { 
             flex: 1; 
             padding: 15px; 
             overflow-y: auto; 
             display: flex; 
             flex-direction: column; 
-            gap: 10px; 
-            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); /* Chat Pattern */
-            background-repeat: repeat;
+            gap: 8px; 
             background-color: #e5ddd5;
+            background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
+            background-repeat: repeat;
+            opacity: 1;
+            overscroll-behavior: contain;
         }
         
         /* Message Bubbles */
-        .msg { max-width: 80%; padding: 10px 15px; border-radius: 15px; font-size: 15px; line-height: 1.4; position: relative; word-wrap: break-word; }
-        .msg.user { align-self: flex-end; background: #dcf8c6; color: black; border-bottom-right-radius: 2px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
-        .msg.ai { align-self: flex-start; background: #ffffff; color: black; border-bottom-left-radius: 2px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
+        .msg { 
+            max-width: 85%; 
+            padding: 8px 12px; 
+            border-radius: 8px; 
+            font-size: 15px; 
+            line-height: 1.4; 
+            position: relative; 
+            word-wrap: break-word; 
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
         
-        /* Input Area - Mobile Fixed */
+        .msg.user { 
+            align-self: flex-end; 
+            background: #dcf8c6; 
+            color: black; 
+            border-top-right-radius: 0;
+        }
+        
+        .msg.ai { 
+            align-self: flex-start; 
+            background: #ffffff; 
+            color: black; 
+            border-top-left-radius: 0;
+        }
+
+        .msg-time {
+            font-size: 10px;
+            color: #999;
+            text-align: right;
+            margin-top: 4px;
+            float: right;
+            margin-left: 10px;
+        }
+        
+        /* Input Area (Keyboard Safe) */
         #input-area { 
-            padding: 10px; 
+            padding: 8px 10px; 
             background: #f0f0f0; 
             display: flex; 
             align-items: center; 
-            gap: 8px; 
-            border-top: 1px solid #ddd;
+            gap: 10px; 
+            min-height: 60px;
+            flex-shrink: 0; 
         }
         
         input { 
@@ -117,212 +126,246 @@
             outline: none; 
             font-size: 16px; 
             background: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         
         button#send-btn { 
-            padding: 12px 20px; 
-            background: #ff4757; 
+            width: 45px; 
+            height: 45px; 
+            background: #008069; 
             color: white; 
             border: none; 
-            border-radius: 50px; 
+            border-radius: 50%; 
             cursor: pointer; 
-            font-weight: bold;
-            font-size: 14px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 20px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        /* Modals & Photos */
-        .photo-container { position: relative; max-width: 250px; border-radius: 10px; overflow: hidden; margin-top: 5px; border: 3px solid #ff4757; background: #000; }
-        .photo-blur { width: 100%; height: 300px; object-fit: cover; filter: blur(25px); opacity: 0.8; }
-        .photo-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; }
-        .unlock-btn { background: #ff4757; color: white; padding: 10px 20px; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        /* Character List Styles */
+        .char-item { padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 15px; cursor: pointer; }
+        .char-item:hover { background: #f5f5f5; }
+        
+        /* Modals */
+        .photo-container { position: relative; max-width: 260px; border-radius: 10px; overflow: hidden; margin-top: 5px; background: #000; border: 2px solid #25D366; }
+        .photo-blur { width: 100%; height: 320px; object-fit: cover; filter: blur(20px); opacity: 0.8; }
+        .photo-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; }
         .unlocked .photo-blur { filter: blur(0); opacity: 1; }
         .unlocked .photo-overlay { display: none; }
-        
-        #ad-modal, #password-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 200; }
-        .modal-content { background: white; padding: 25px; border-radius: 15px; text-align: center; width: 85%; max-width: 320px; }
-        .modal-btn { width: 100%; padding: 12px; margin-top: 10px; border: none; border-radius: 8px; font-weight: bold; color: white; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div id="ad-modal">
-    <div class="modal-content">
-        <h2 style="color:#ff4757; margin-top:0;">⚠️ She is busy!</h2>
-        <p>Too many messages. Reconnect to continue.</p>
-        <button class="modal-btn" style="background:#0084ff;" onclick="watchAdAndReconnect()">🔄 Reconnect</button>
-    </div>
-</div>
-
-<div id="password-modal">
-    <div class="modal-content">
-        <h3>🔐 Unlock Photos</h3>
-        <input type="text" id="secret-code" placeholder="Enter Code Here..." style="width: 100%; padding:12px; text-align:center; border:1px solid #ddd; border-radius:5px; margin-bottom:10px; box-sizing:border-box;">
-        <button class="modal-btn" style="background:#2ed573;" onclick="checkCode()">Unlock</button>
-        <button class="modal-btn" style="background:#555;" onclick="document.getElementById('password-modal').style.display='none'">Cancel</button>
-    </div>
-</div>
-
+<div id="overlay" onclick="toggleSidebar()"></div>
 <div id="sidebar">
-    <div class="header-title">Lankan Dates ❤️</div>
-    <div id="char-list"></div>
-    <div style="padding:15px; text-align:center; border-top:1px solid #eee;">
-        <button onclick="enterCodePopup()" style="background:none; border:none; color:#0084ff; text-decoration:underline; cursor:pointer;">I have a Premium Code</button>
+    <div style="padding:20px; background:#008069; color:white; font-size:18px; font-weight:bold;">
+        Lankan Dates ❤️
+    </div>
+    <div id="char-list" style="overflow-y:auto; flex:1;"></div>
+    <div style="padding:15px; text-align:center; border-top:1px solid #ddd;">
+        <button onclick="enterCode()" style="background:none; border:none; color:#008069; font-weight:bold; cursor:pointer;">🔑 I have a Premium Code</button>
     </div>
 </div>
 
 <div id="chat-area">
     <div id="header">
-        <div style="display:flex; align-items:center;">
-            <div onclick="document.getElementById('sidebar').classList.toggle('show')" style="margin-right:15px; cursor:pointer; font-size:24px; padding:5px;">☰</div>
-            <span id="header-name">Select a girl...</span>
+        <div class="menu-btn" onclick="toggleSidebar()">⬅️</div>
+        <img id="header-img" class="profile-pic" src="">
+        <div class="header-info">
+            <span id="header-name" class="header-name">Select a girl</span>
+            <span class="header-status">online</span>
         </div>
-        <span id="premium-badge" style="display:none; background:#ffd32a; color:black; padding:4px 10px; border-radius:15px; font-size:11px; font-weight:800;">👑 VIP</span>
     </div>
     
-    <div id="messages"></div>
-    <div id="typing-indicator" style="font-size:12px; color:#555; padding:5px 20px; display:none; font-style:italic;">Typing...</div>
-    
+    <div id="messages">
+        <div style="text-align:center; margin-top:50%; color:#888;">
+            <p>Tap the ⬅️ button to pick a girl!</p>
+        </div>
+    </div>
+
     <div id="input-area">
-        <input type="text" id="user-input" placeholder="Type a message..." disabled>
-        <button id="send-btn" onclick="sendMessage()" disabled>Send</button>
+        <input type="text" id="user-input" placeholder="Message" disabled>
+        <button id="send-btn" onclick="sendMessage()">➤</button>
     </div>
 </div>
 
 <script>
-    // ================= SETTINGS =================
+    // ================= CONFIGURATION =================
     const WORKER_URL = "https://chatgirl.ranbindua.workers.dev"; 
-    const MONETAG_URL = "https://otieu.com/4/10358055"; 
-    const PAYMENT_LINK = "https://wa.me/94700000000?text=I%20want%20premium"; 
     const SECRET_UNLOCK_CODE = "LOVE2026"; 
-    // ============================================
+    // =================================================
 
-    let messageCount = 0;
     let isPremium = false;
     let currentCharacter = null;
     let chatHistory = [];
 
+    // --- SINGLISH PROMPT ---
     const BASE_INSTRUCTION = `
     You are a Sri Lankan girl chatting on WhatsApp.
     RULES:
     1. Speak ONLY in "Singlish" (Sinhala words in English letters).
-    2. NEVER use formal English sentences.
-    3. Use filler words: "Ane", "Mata", "Oya", "Baba", "Na", "Ow".
-    4. Keep replies short and casual.
+    2. NEVER use formal English (e.g., don't say "How are you?", say "Kohomada?").
+    3. Use fillers: "Ane", "Mata", "Oya", "Baba", "Na", "Ow".
+    4. Keep replies short, casual and fun.
     `;
 
+    // --- CHARACTERS (Updated to .png) ---
     const characters = [
-        { id: 1, name: "Kavindya", img: "1000101736.png", tagline: "24 Years • Kurunegala", photos: ["1000101736.png"], systemPrompt: `${BASE_INSTRUCTION} You are Kavindya. Innocent but ambitious. Call him 'baba'. Reply '[SEND_PHOTO]' if asked for pics.` },
-        { id: 2, name: "Nipuni", img: "2.png", tagline: "18 Years • Horowpothana", photos: ["2.png"], systemPrompt: `${BASE_INSTRUCTION} You are Nipuni, a village girl. Shy. Use "Ane aiye". Reply '[SEND_PHOTO]' if asked for pics.` },
-        { id: 3, name: "Sajani", img: "3.png", tagline: "24 Years • KDU Student", photos: ["3.png"], systemPrompt: `${BASE_INSTRUCTION} You are Sajani. Strict and direct. Reply '[SEND_PHOTO]' if asked for pics.` },
-        { id: 4, name: "Pawani", img: "4.png", tagline: "20 Years • Call Center", photos: ["4.png"], systemPrompt: `${BASE_INSTRUCTION} You are Pawani. Naughty and flirty. Reply '[SEND_PHOTO]' if asked for pics.` },
-        { id: 5, name: "Saththya", img: "5.png", tagline: "35 Years • Single Mom", photos: ["5.png"], systemPrompt: `${BASE_INSTRUCTION} You are Saththya. Lonely single mom. Reply '[SEND_PHOTO]' if asked for pics.` }
+        { id: 1, name: "Kavindya", img: "1000101736.png", photos: ["1000101736.png"], systemPrompt: `${BASE_INSTRUCTION} You are Kavindya. Innocent but ambitious. Call him 'baba'. Reply '[SEND_PHOTO]' if asked for pics.` },
+        { id: 2, name: "Nipuni", img: "2.png", photos: ["2.png"], systemPrompt: `${BASE_INSTRUCTION} You are Nipuni, a village girl. Shy. Use "Ane aiye". Reply '[SEND_PHOTO]' if asked for pics.` },
+        { id: 3, name: "Sajani", img: "3.png", photos: ["3.png"], systemPrompt: `${BASE_INSTRUCTION} You are Sajani. Strict and direct. Reply '[SEND_PHOTO]' if asked for pics.` },
+        { id: 4, name: "Pawani", img: "4.png", photos: ["4.png"], systemPrompt: `${BASE_INSTRUCTION} You are Pawani. Naughty and flirty. Reply '[SEND_PHOTO]' if asked for pics.` },
+        { id: 5, name: "Saththya", img: "5.png", photos: ["5.png"], systemPrompt: `${BASE_INSTRUCTION} You are Saththya. Lonely single mom. Reply '[SEND_PHOTO]' if asked for pics.` }
     ];
 
-    const charListDiv = document.getElementById('char-list');
+    // Load Sidebar
+    const charList = document.getElementById('char-list');
     characters.forEach(char => {
         const div = document.createElement('div');
-        div.className = 'character-card';
-        div.innerHTML = `<img src="${char.img}" class="avatar" onerror="this.src='https://ui-avatars.com/api/?name=${char.name}&background=random'"><div><div style="font-weight:bold;">${char.name}</div><div style="font-size:11px; color:#666;">${char.tagline}</div></div>`;
-        div.onclick = () => selectCharacter(char, div);
-        charListDiv.appendChild(div);
+        div.className = 'char-item';
+        // Avatar fix with fallback
+        div.innerHTML = `
+            <img src="${char.img}" class="profile-pic" onerror="this.src='https://ui-avatars.com/api/?name=${char.name}&background=random'">
+            <div><b>${char.name}</b></div>
+        `;
+        div.onclick = () => loadCharacter(char);
+        charList.appendChild(div);
     });
 
-    function selectCharacter(char, element) {
+    function loadCharacter(char) {
         currentCharacter = char;
         chatHistory = [];
-        messageCount = 0;
-        document.querySelectorAll('.character-card').forEach(c => c.classList.remove('active'));
-        element.classList.add('active');
         document.getElementById('header-name').innerText = char.name;
+        
+        // Set Header Image with fallback
+        const headerImg = document.getElementById('header-img');
+        headerImg.src = char.img;
+        headerImg.onerror = function() { this.src = `https://ui-avatars.com/api/?name=${char.name}&background=random`; };
+
         document.getElementById('messages').innerHTML = '';
         document.getElementById('user-input').disabled = false;
-        document.getElementById('send-btn').disabled = false;
-        document.getElementById('sidebar').classList.remove('show');
+        
+        toggleSidebar();
 
+        // System Prompt
         chatHistory.push({ role: "system", content: char.systemPrompt });
-        setTimeout(() => addMessage(`Hi ${char.id === 1 ? 'baba' : 'oyaa'}... kohomada?`, 'ai'), 500);
+        
+        // Welcome Message
+        setTimeout(() => {
+            const welcome = char.id === 1 ? "Hi baba... kohomada?" : "Hi oya... kohomada?";
+            addMessage(welcome, 'ai');
+        }, 300);
+    }
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('show');
+        const overlay = document.getElementById('overlay');
+        overlay.style.display = overlay.style.display === 'block' ? 'none' : 'block';
     }
 
     async function sendMessage() {
-        if (!isPremium && messageCount > 0 && messageCount % 5 === 0) {
-            document.getElementById('ad-modal').style.display = 'flex';
-            return;
-        }
+        const input = document.getElementById('user-input');
+        const text = input.value.trim();
+        if (!text) return;
 
-        const inputField = document.getElementById('user-input');
-        const userText = inputField.value.trim();
-        if (!userText) return;
+        // User Message
+        addMessage(text, 'user');
+        input.value = '';
+        input.focus(); // Keep keyboard up for fast chatting
 
-        addMessage(userText, 'user');
-        inputField.value = '';
-        inputField.focus(); // Keep keyboard up if possible
+        chatHistory.push({ role: "user", content: text });
 
-        chatHistory.push({ role: "user", content: userText });
-        messageCount++;
-        document.getElementById('typing-indicator').style.display = 'block';
+        // Typing Indicator
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = 'msg ai';
+        loadingDiv.innerHTML = '<span style="font-style:italic; color:#777;">typing...</span>';
+        loadingDiv.id = 'loading';
+        document.getElementById('messages').appendChild(loadingDiv);
+        scrollToBottom();
 
         try {
             const response = await fetch(WORKER_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    "model": "google/gemini-2.0-flash-exp:free", 
+                    // === LATEST MODEL from your list ===
+                    "model": "google/gemini-2.5-flash", 
                     "messages": chatHistory
                 })
             });
 
             const data = await response.json();
-            if(data.error) throw new Error(JSON.stringify(data.error));
-            
-            let aiReply = data.choices[0].message.content;
-            if (aiReply.includes("[SEND_PHOTO]")) {
-                sendLockedPhoto();
-            } else {
-                addMessage(aiReply, 'ai');
-                chatHistory.push({ role: "assistant", content: aiReply });
+            document.getElementById('loading').remove();
+
+            if(data.error) {
+                // Show clean error
+                addMessage("⚠️ Error: " + (data.error.message || "Unknown error"), 'ai');
+                console.error(data.error);
+                return;
             }
-        } catch (error) {
-            console.error(error);
-            addMessage("Podi aulak giya. Aaye kiyanna.", 'system'); 
-        } finally {
-            document.getElementById('typing-indicator').style.display = 'none';
+            
+            let reply = data.choices[0].message.content;
+
+            if (reply.includes("[SEND_PHOTO]")) {
+                sendPhoto();
+            } else {
+                addMessage(reply, 'ai');
+                chatHistory.push({ role: "assistant", content: reply });
+            }
+
+        } catch (e) {
+            if(document.getElementById('loading')) document.getElementById('loading').remove();
+            addMessage("⚠️ Network Error. Check internet.", 'ai');
         }
     }
 
     function addMessage(text, sender) {
         const div = document.createElement('div');
         div.className = `msg ${sender}`;
-        div.innerText = text;
+        const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        div.innerHTML = `${text} <span class="msg-time">${time}</span>`;
         const msgs = document.getElementById('messages');
         msgs.appendChild(div);
-        msgs.scrollTop = msgs.scrollHeight;
+        scrollToBottom();
     }
 
-    function sendLockedPhoto() {
-        const randomPhoto = currentCharacter.photos[Math.floor(Math.random() * currentCharacter.photos.length)];
+    function sendPhoto() {
+        const randomPhoto = currentCharacter.photos[0]; // Use first photo for now
         const div = document.createElement('div');
-        div.className = isPremium ? 'photo-container unlocked' : 'photo-container';
-        div.innerHTML = `<img src="${randomPhoto}" class="photo-blur"><div class="photo-overlay"><h3>🔞 Photo</h3><button class="unlock-btn" onclick="redirectToPay()">Unlock</button></div>`;
+        div.className = `msg ai`;
+        div.style.background = "transparent";
+        div.style.padding = "0";
+        div.style.boxShadow = "none";
+        
+        div.innerHTML = `
+            <div class="${isPremium ? 'photo-container unlocked' : 'photo-container'}">
+                <img src="${randomPhoto}" class="photo-blur">
+                <div class="photo-overlay">
+                    <button onclick="enterCode()" style="padding:10px 20px; border-radius:20px; border:none; background:#008069; color:white; font-weight:bold;">Tap to Unlock 🔒</button>
+                </div>
+            </div>`;
+        document.getElementById('messages').appendChild(div);
+        scrollToBottom();
+    }
+
+    function scrollToBottom() {
         const msgs = document.getElementById('messages');
-        msgs.appendChild(div);
         msgs.scrollTop = msgs.scrollHeight;
     }
 
-    function watchAdAndReconnect() { window.open(MONETAG_URL, '_blank'); document.getElementById('ad-modal').style.display = 'none'; messageCount++; }
-    function redirectToPay() { if(confirm("Chat Admin for code?")) window.open(PAYMENT_LINK, '_blank'); }
-    function enterCodePopup() { document.getElementById('password-modal').style.display = 'flex'; }
-    function checkCode() {
-        if(document.getElementById('secret-code').value === SECRET_UNLOCK_CODE) {
+    function enterCode() {
+        const code = prompt("Enter Secret Code to Unlock Photos:");
+        if(code === SECRET_UNLOCK_CODE) {
             isPremium = true;
-            document.getElementById('password-modal').style.display = 'none';
-            document.getElementById('premium-badge').style.display = 'block';
+            alert("✅ Access Granted! Photos Unlocked.");
             document.querySelectorAll('.photo-container').forEach(el => el.classList.add('unlocked'));
-            alert("Unlocked!");
-        } else { alert("Wrong Code!"); }
+        } else {
+            alert("❌ Wrong Code!");
+        }
     }
     
+    // Enter key support
     document.getElementById("user-input").addEventListener("keypress", function(event) {
         if (event.key === "Enter") sendMessage();
     });
