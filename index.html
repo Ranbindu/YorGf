@@ -5,170 +5,197 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
     <title>Lankan Dates ❤️</title>
     <style>
-        /* --- WHATSAPP MOBILE UI STYLES --- */
+        /* --- GLOBAL STYLES --- */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #e5ddd5; 
+            background-color: #d1d7db; /* WhatsApp Web BG Color */
             margin: 0; 
             padding: 0;
             display: flex; 
-            flex-direction: column;
-            height: 100dvh; /* Mobile Full Height */
+            height: 100dvh; 
             overflow: hidden; 
         }
 
-        /* Sidebar (Slide Menu) */
+        /* --- SIDEBAR (Character List) --- */
         #sidebar { 
-            position: absolute;
-            left: -100%;
-            top: 0;
-            bottom: 0;
-            width: 85%; 
-            max-width: 320px;
             background: white; 
-            z-index: 1000;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
+            display: flex; 
             flex-direction: column;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+            border-right: 1px solid #ddd;
+            z-index: 1000;
         }
-        #sidebar.show { left: 0; }
-        #overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:900; }
 
-        /* Header (WhatsApp Green) */
+        /* Header inside Sidebar */
+        .sidebar-header {
+            padding: 10px 16px;
+            background: #f0f2f5;
+            border-bottom: 1px solid #d1d7db;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Character Items */
+        .char-item { 
+            padding: 12px 15px; 
+            border-bottom: 1px solid #f0f2f5; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            cursor: pointer; 
+            transition: 0.2s;
+        }
+        .char-item:hover { background: #f5f5f5; }
+        .char-item.active { background: #f0f2f5; }
+        
+        .char-item img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
+        .char-info h4 { margin: 0; font-size: 16px; color: #111; font-weight: 500; }
+        .char-info p { margin: 3px 0 0 0; font-size: 13px; color: #666; }
+
+        /* --- CHAT AREA --- */
+        #chat-area { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            background-color: #efeae2; 
+            position: relative; 
+        }
+
+        /* Chat Header */
         #header { 
-            padding: 0 15px; 
-            background: #008069; 
-            color: white; 
+            padding: 0 16px; 
+            background: #f0f2f5; 
+            color: #54656f; 
             display: flex; 
             align-items: center; 
             gap: 15px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            z-index: 10;
+            border-bottom: 1px solid #d1d7db;
             height: 60px;
-            flex-shrink: 0;
         }
 
-        .menu-btn { font-size: 24px; cursor: pointer; padding: 5px; }
-        .profile-pic { width: 40px; height: 40px; border-radius: 50%; background: #ddd; object-fit: cover; border: 1px solid rgba(255,255,255,0.5); }
+        .menu-btn { font-size: 24px; cursor: pointer; padding: 5px; color: #54656f; }
+        .profile-pic { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
         .header-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-        .header-name { font-weight: bold; font-size: 17px; line-height: 1.2; }
-        .header-status { font-size: 12px; opacity: 0.8; }
+        .header-name { font-weight: bold; font-size: 16px; color: #111; }
+        .header-status { font-size: 12px; color: #666; }
 
-        /* Messages Area */
+        /* Messages */
         #messages { 
             flex: 1; 
-            padding: 15px; 
+            padding: 20px 5%; /* Better padding for desktop */
             overflow-y: auto; 
             display: flex; 
             flex-direction: column; 
             gap: 4px; 
-            background-color: #e5ddd5;
             background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
             background-repeat: repeat;
             opacity: 1;
-            scroll-behavior: smooth;
         }
         
-        /* Message Bubbles */
+        /* Bubbles */
         .msg { 
-            max-width: 85%; 
+            max-width: 65%; /* Smaller width for desktop look */
             padding: 6px 7px 8px 9px; 
             border-radius: 8px; 
-            font-size: 15px; 
-            line-height: 1.4; 
+            font-size: 14.2px; 
+            line-height: 19px; 
             position: relative; 
-            word-wrap: break-word; 
-            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
             margin-bottom: 2px;
         }
         
-        .msg.user { 
-            align-self: flex-end; 
-            background: #dcf8c6; 
-            color: black; 
-            border-top-right-radius: 0;
-        }
-        
-        .msg.ai { 
-            align-self: flex-start; 
-            background: #ffffff; 
-            color: black; 
-            border-top-left-radius: 0;
-        }
+        .msg.user { align-self: flex-end; background: #d9fdd3; color: #111; }
+        .msg.ai { align-self: flex-start; background: #ffffff; color: #111; }
+        .msg-time { float: right; margin-left: 8px; margin-top: 4px; font-size: 11px; color: #999; }
 
-        .msg-time {
-            float: right;
-            margin-left: 8px;
-            margin-top: 4px;
-            font-size: 11px;
-            color: #999;
-        }
-        
-        /* Input Area (Sticky Bottom) */
+        /* Input Area */
         #input-area { 
-            padding: 6px 10px; 
-            background: #f0f0f0; 
+            padding: 10px 16px; 
+            background: #f0f2f5; 
             display: flex; 
             align-items: center; 
-            gap: 8px; 
-            min-height: 60px;
-            flex-shrink: 0; 
+            gap: 10px; 
+            min-height: 62px;
         }
         
         input { 
             flex: 1; 
-            padding: 12px 15px; 
+            padding: 9px 12px; 
             border: none; 
-            border-radius: 25px; 
+            border-radius: 8px; 
             outline: none; 
-            font-size: 16px; 
+            font-size: 15px; 
             background: white;
         }
         
         button#send-btn { 
-            width: 45px; 
-            height: 45px; 
-            background: #008069; 
+            width: 40px; height: 40px; 
+            background: #00a884; 
             color: white; 
             border: none; 
             border-radius: 50%; 
             cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
             font-size: 20px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            display: flex; align-items: center; justify-content: center;
         }
 
-        /* Sidebar Character List */
-        .char-item { padding: 12px 15px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 15px; cursor: pointer; }
-        .char-item:hover { background: #f5f5f5; }
-        .char-item img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
-        .char-info h4 { margin: 0; font-size: 16px; color: #111; }
-        .char-info p { margin: 2px 0 0 0; font-size: 13px; color: #666; }
+        /* --- RESPONSIVE LOGIC (Laptop vs Phone) --- */
+        
+        /* MOBILE STYLES (Screen less than 768px) */
+        @media (max-width: 768px) {
+            #sidebar {
+                position: absolute;
+                left: -100%;
+                top: 0;
+                bottom: 0;
+                width: 85%;
+                transition: 0.3s;
+                box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+            }
+            #sidebar.show { left: 0; }
+            .menu-btn { display: block; } /* Show menu button */
+            .msg { max-width: 85%; } /* Wider bubbles on phone */
+            #messages { padding: 10px; }
+            #overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:900; }
+        }
+
+        /* DESKTOP/LAPTOP STYLES (Screen bigger than 768px) */
+        @media (min-width: 769px) {
+            body { 
+                max-width: 1600px; 
+                margin: 0 auto; 
+                box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+            }
+            #sidebar {
+                position: relative; /* Fixed side by side */
+                left: 0;
+                width: 350px; /* Fixed width */
+                display: flex;
+            }
+            .menu-btn { display: none; } /* Hide menu button on Laptop */
+            #overlay { display: none !important; } /* No overlay needed */
+        }
 
         /* Modals */
         #ad-modal, #password-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 9999; }
         .modal-content { background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 320px; width: 85%; }
-        .modal-btn { background: #008069; color: white; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; margin-top: 20px; width: 100%; font-weight: bold; }
+        .modal-btn { background: #00a884; color: white; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; margin-top: 20px; width: 100%; font-weight: bold; }
         
-        /* Photo Styles */
-        .photo-container { position: relative; max-width: 260px; border-radius: 10px; overflow: hidden; margin-top: 5px; border: 3px solid #008069; background: #000; }
+        .photo-container { position: relative; max-width: 260px; border-radius: 10px; overflow: hidden; margin-top: 5px; border: 3px solid #00a884; background: #000; }
         .photo-blur { width: 100%; height: 350px; object-fit: cover; filter: blur(30px); opacity: 0.7; }
         .photo-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; }
         .unlocked .photo-blur { filter: blur(0); opacity: 1; }
         .unlocked .photo-overlay { display: none; }
-
     </style>
 </head>
 <body>
 
 <div id="ad-modal">
     <div class="modal-content">
-        <h2 style="color:#008069;">⚠️ She is busy!</h2>
+        <h2 style="color:#00a884;">⚠️ She is busy!</h2>
         <p>Too many messages. Reconnect to continue chatting.</p>
         <button class="modal-btn" onclick="watchAdAndReconnect()">🔄 Reconnect Now</button>
     </div>
@@ -186,13 +213,12 @@
 <div id="overlay" onclick="toggleSidebar()"></div>
 
 <div id="sidebar">
-    <div style="padding: 20px; background: #008069; color: white;">
-        <h3 style="margin:0;">Lankan Dates ❤️</h3>
-        <p style="margin:5px 0 0 0; font-size:13px; opacity:0.8;">Select a contact</p>
+    <div class="sidebar-header">
+        <h3 style="margin:0; color:#54656f;">Lankan Dates ❤️</h3>
     </div>
     <div id="char-list" style="overflow-y: auto; flex:1;"></div>
-    <div style="padding:15px; text-align:center; border-top:1px solid #eee;">
-        <button onclick="enterCodePopup()" style="background:none; border:none; color:#008069; text-decoration:underline; cursor:pointer; font-weight:bold;">I have a Premium Code</button>
+    <div style="padding:15px; text-align:center; background:#f0f2f5;">
+        <button onclick="enterCodePopup()" style="background:none; border:none; color:#00a884; text-decoration:underline; cursor:pointer; font-weight:bold;">I have a Premium Code</button>
     </div>
 </div>
 
@@ -208,22 +234,22 @@
     </div>
     
     <div id="messages">
-        <div style="text-align:center; margin-top:50%; color:#888; font-size:14px;">
-            <p>Tap ⬅️ to start a chat</p>
+        <div style="text-align:center; margin-top:20%; color:#888;">
+            <h2>WhatsApp Web</h2>
+            <p>Select a girl to start chatting!</p>
         </div>
     </div>
     
-    <div id="typing-indicator" style="font-size:12px; color:#666; padding:5px 20px; display:none; background:#e5ddd5;">Typing...</div>
+    <div id="typing-indicator" style="font-size:12px; color:#666; padding:5px 20px; display:none; background:#efeae2;">Typing...</div>
     
     <div id="input-area">
-        <input type="text" id="user-input" placeholder="Message" disabled>
+        <input type="text" id="user-input" placeholder="Type a message" disabled>
         <button id="send-btn" onclick="sendMessage()" disabled>➤</button>
     </div>
 </div>
 
 <script>
     // ================= CONFIGURATION =================
-    // Logic එක 100% ඔයා එවපු එකමයි
     const WORKER_URL = "https://chatgirl.ranbindua.workers.dev"; 
     const MONETAG_URL = "https://otieu.com/4/10358055"; 
     const PAYMENT_LINK = "https://wa.me/94700000000?text=I%20want%20premium"; 
@@ -247,48 +273,28 @@
 
     const characters = [
         {
-            id: 1, 
-            name: "Kavindya", 
-            img: "1000101736.png", 
-            tagline: "24 Years • Kurunegala",
-            photos: ["1000101736.png"], 
+            id: 1, name: "Kavindya", img: "1000101736.png", photos: ["1000101736.png"], tagline: "24 Years • Kurunegala",
             systemPrompt: `${BASE_INSTRUCTION} You are Kavindya. Personality: Innocent but secretly ambitious. Call him 'baba' or 'suddoo'. If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'.`
         },
         {
-            id: 2, 
-            name: "Nipuni", 
-            img: "2.png", 
-            tagline: "18 Years • Horowpothana",
-            photos: ["2.png"],
+            id: 2, name: "Nipuni", img: "2.png", photos: ["2.png"], tagline: "18 Years • Horowpothana",
             systemPrompt: `${BASE_INSTRUCTION} You are Nipuni, a village girl. Use village words like "Ane aiye", "Iyoo", "Ammo". Be shy. If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'.`
         },
         {
-            id: 3, 
-            name: "Sajani", 
-            img: "3.png", 
-            tagline: "24 Years • KDU Student",
-            photos: ["3.png"],
+            id: 3, name: "Sajani", img: "3.png", photos: ["3.png"], tagline: "24 Years • KDU Student",
             systemPrompt: `${BASE_INSTRUCTION} You are Sajani. Be strict and direct. Say things like "Boru kiyanna epa", "Moko parakku?". If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'.`
         },
         {
-            id: 4, 
-            name: "Pawani", 
-            img: "4.png", 
-            tagline: "20 Years • Call Center",
-            photos: ["4.png"],
+            id: 4, name: "Pawani", img: "4.png", photos: ["4.png"], tagline: "20 Years • Call Center",
             systemPrompt: `${BASE_INSTRUCTION} You are Pawani. Use slang words. Be flirtatious. "Moko wenne?", "Kammali ane". If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'.`
         },
         {
-            id: 5, 
-            name: "Saththya", 
-            img: "5.png", 
-            tagline: "35 Years • Single Mom",
-            photos: ["5.png"],
+            id: 5, name: "Saththya", img: "5.png", photos: ["5.png"], tagline: "35 Years • Single Mom",
             systemPrompt: `${BASE_INSTRUCTION} You are Saththya. Speak calmly and maturely. "Mata paalui", "Thaniyama inne". If asked for photos/nudes, reply EXACTLY: '[SEND_PHOTO]'.`
         }
     ];
 
-    // Load Sidebar Characters
+    // Load Sidebar
     const charListDiv = document.getElementById('char-list');
     characters.forEach(char => {
         const div = document.createElement('div');
@@ -299,22 +305,30 @@
                 <h4>${char.name}</h4>
                 <p>${char.tagline}</p>
             </div>`;
-        div.onclick = () => selectCharacter(char);
+        div.onclick = () => selectCharacter(char, div);
         charListDiv.appendChild(div);
     });
 
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('overlay');
-        sidebar.classList.toggle('show');
-        overlay.style.display = sidebar.classList.contains('show') ? 'block' : 'none';
+        
+        // Mobile Only Logic
+        if (window.innerWidth <= 768) {
+            sidebar.classList.toggle('show');
+            overlay.style.display = sidebar.classList.contains('show') ? 'block' : 'none';
+        }
     }
 
-    function selectCharacter(char) {
+    function selectCharacter(char, element) {
         currentCharacter = char;
         chatHistory = [];
         messageCount = 0;
         
+        // Highlight active
+        document.querySelectorAll('.char-item').forEach(c => c.classList.remove('active'));
+        if(element) element.classList.add('active');
+
         document.getElementById('header-name').innerText = char.name;
         document.getElementById('header-img').src = char.img;
         document.getElementById('header-img').onerror = function() { this.src = `https://ui-avatars.com/api/?name=${char.name}&background=random`; };
@@ -323,7 +337,11 @@
         document.getElementById('user-input').disabled = false;
         document.getElementById('send-btn').disabled = false;
         
-        toggleSidebar(); // Close sidebar after selection
+        // Close sidebar on mobile only
+        if (window.innerWidth <= 768) {
+            document.getElementById('sidebar').classList.remove('show');
+            document.getElementById('overlay').style.display = 'none';
+        }
 
         chatHistory.push({ role: "system", content: char.systemPrompt });
         
@@ -349,7 +367,7 @@
 
         addMessage(userText, 'user');
         inputField.value = '';
-        inputField.focus(); // Keep keyboard up
+        inputField.focus(); 
         
         chatHistory.push({ role: "user", content: userText });
         
@@ -361,7 +379,7 @@
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    "model": "google/gemini-2.5-flash", // Logic එක ඒ විදියමයි
+                    "model": "google/gemini-2.5-flash", 
                     "messages": chatHistory
                 })
             });
@@ -393,7 +411,6 @@
     function addMessage(text, sender) {
         const div = document.createElement('div');
         div.className = `msg ${sender}`;
-        // Add timestamp like WhatsApp
         const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         div.innerHTML = `${text} <span class="msg-time">${time}</span>`;
         
@@ -405,7 +422,7 @@
     function sendLockedPhoto() {
         const randomPhoto = currentCharacter.photos[Math.floor(Math.random() * currentCharacter.photos.length)];
         const div = document.createElement('div');
-        div.className = 'msg ai'; // Use bubble style for photo container
+        div.className = 'msg ai';
         div.style.background = "transparent";
         div.style.padding = "0";
         div.style.boxShadow = "none";
