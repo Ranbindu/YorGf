@@ -50,7 +50,7 @@
 
         /* Locked Character Style */
         .char-item.locked {
-            opacity: 0.9; /* Made clearer to see the pretty photos */
+            opacity: 0.9;
             background: #fdfdfd;
         }
         .char-item.locked .char-info h4 { color: #444; }
@@ -160,6 +160,11 @@
             border-radius: 8px; cursor: pointer; margin-top: 15px; width: 100%; font-weight: bold; font-size: 15px;
         }
         .modal-btn.close { background: #555; margin-top: 10px; }
+        
+        .register-text {
+            background: #f0f2f5; padding: 10px; border-radius: 8px; margin-top: 15px;
+            color: #00a884; font-weight: bold; border: 1px dashed #00a884;
+        }
 
         /* --- RESPONSIVE --- */
         @media (max-width: 768px) {
@@ -201,7 +206,11 @@
             <br>
             <span style="color:#e84118; font-weight:bold;">මෙයා එක්ක කතා කරන්න නම් ඔයා Register වෙන්න ඕනේ.</span>
         </p>
-        <button class="modal-btn" onclick="openRegisterLink()">📝 Register Now</button>
+        
+        <div class="register-text">
+            Register Now
+        </div>
+
         <button class="modal-btn close" onclick="document.getElementById('vip-modal').style.display='none'">Close</button>
     </div>
 </div>
@@ -243,8 +252,7 @@
 <script>
     // ================= CONFIGURATION =================
     const WORKER_URL = "https://chatgirl.ranbindua.workers.dev"; 
-    const MONETAG_DIRECT_LINK = "https://otieu.com/4/10358055"; // Your Ad Link
-    const REGISTER_LINK = "https://ideamart.io/register"; // Your Register Link
+    const MONETAG_DIRECT_LINK = "https://otieu.com/4/10358055"; 
     const AD_INTERVAL = 4; // Every 4 messages
     // =================================================
 
@@ -357,6 +365,10 @@
         document.getElementById('user-input').disabled = false;
         document.getElementById('send-btn').disabled = false;
         
+        // --- AUTO FOCUS FIX ---
+        // Automatically focus input when selecting character
+        document.getElementById('user-input').focus();
+        
         if (window.innerWidth <= 768) {
             document.getElementById('sidebar').classList.remove('show');
             document.getElementById('overlay').style.display = 'none';
@@ -415,6 +427,8 @@
             addMessage("Network Error. Please try again.", 'system');
         } finally {
             document.getElementById('typing-indicator').style.display = 'none';
+            // Auto Focus Back to Input
+            inputField.focus();
         }
     }
 
@@ -441,12 +455,25 @@
         
         // Increment count so it doesn't trigger immediately again
         messageCount++; 
+        
+        // Focus back to chat
+        document.getElementById('user-input').focus();
     }
+    
+    // --- GLOBAL KEY LISTENER FOR AUTO FOCUS ---
+    document.addEventListener('keydown', function(event) {
+        const input = document.getElementById('user-input');
+        const adModal = document.getElementById('ad-modal');
+        const vipModal = document.getElementById('vip-modal');
 
-    // --- OPEN REGISTER LINK ---
-    function openRegisterLink() {
-        window.open(REGISTER_LINK, '_blank');
-    }
+        // Don't focus if modals are open
+        if(adModal.style.display === 'flex' || vipModal.style.display === 'flex') return;
+
+        // If user is not already focused on input, focus it
+        if (document.activeElement !== input) {
+            input.focus();
+        }
+    });
     
     document.getElementById("user-input").addEventListener("keypress", function(event) {
         if (event.key === "Enter") sendMessage();
