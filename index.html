@@ -50,12 +50,13 @@
 
         /* Locked Character Style */
         .char-item.locked {
-            opacity: 0.8; /* Little bit more visible */
-            background: #f9f9f9;
+            opacity: 0.9; /* Made clearer to see the pretty photos */
+            background: #fdfdfd;
         }
-        .char-item.locked .char-info h4 { color: #555; }
+        .char-item.locked .char-info h4 { color: #444; }
         
-        .char-item img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; }
+        .char-item img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .char-info { flex: 1; }
         .char-info h4 { margin: 0; font-size: 16px; color: #111; font-weight: 500; }
         .char-info p { margin: 3px 0 0 0; font-size: 13px; color: #666; }
         .lock-icon { font-size: 12px; color: #e84118; font-weight: bold; margin-left: 5px; }
@@ -242,9 +243,9 @@
 <script>
     // ================= CONFIGURATION =================
     const WORKER_URL = "https://chatgirl.ranbindua.workers.dev"; 
-    const MONETAG_DIRECT_LINK = "https://otieu.com/4/10358055"; 
-    const REGISTER_LINK = "https://ideamart.io/register"; 
-    const AD_INTERVAL = 4; 
+    const MONETAG_DIRECT_LINK = "https://otieu.com/4/10358055"; // Your Ad Link
+    const REGISTER_LINK = "https://ideamart.io/register"; // Your Register Link
+    const AD_INTERVAL = 4; // Every 4 messages
     // =================================================
 
     let messageCount = 0;
@@ -256,9 +257,11 @@
     Instructions for Roleplay:
     1. You are playing the role of a Sri Lankan wife/girlfriend in a private chat.
     2. BE ROMANTIC AND FLIRTY.
-    3. Speak ONLY in "Singlish".
+    3. Speak ONLY in "Singlish" (Sinhala words in English).
     4. NO GIBBERISH. Speak normally.
-    5. IMPORTANT: You CANNOT send photos. If asked, refuse nicely.
+    5. IMPORTANT: You CANNOT send photos. 
+       - If user asks for photos/nudes, refuse nicely.
+       - Say: "Ane baba, api chat karamu, mata photo ewanna ba." or "Chat eka athi neda manika?"
     `;
 
     // 1. ACTIVE CHARACTERS (Free to Chat)
@@ -276,33 +279,33 @@
     // Add Active Characters
     activeCharacters.forEach(char => createCharItem(char, false));
 
-    // --- NEW: Realistic AI Photos for VIP Girls ---
+    // --- DUMMY VIP CHARACTERS (Sri Lankan Gen Z Style) ---
     const dummyNames = ["Diluni", "Hashini", "Malki", "Rashi", "Sanduni", "Thisuri", "Amasha", "Vindy", "Kaushi", "Nethmi", "Chamodi", "Lochana", "Dinithi", "Sewwandi", "Madushi"];
-    // These are safe, AI-generated realistic portraits from a public source (ThisPersonDoesNotExist style)
+    
+    // High Quality Unsplash Photos (South Asian/Indian look)
     const dummyPhotos = [
-        "https://randomuser.me/api/portraits/women/21.jpg",
-        "https://randomuser.me/api/portraits/women/22.jpg",
-        "https://randomuser.me/api/portraits/women/23.jpg",
-        "https://randomuser.me/api/portraits/women/24.jpg",
-        "https://randomuser.me/api/portraits/women/25.jpg",
-        "https://randomuser.me/api/portraits/women/26.jpg",
-        "https://randomuser.me/api/portraits/women/28.jpg",
-        "https://randomuser.me/api/portraits/women/29.jpg",
-        "https://randomuser.me/api/portraits/women/30.jpg",
-        "https://randomuser.me/api/portraits/women/31.jpg",
-        "https://randomuser.me/api/portraits/women/32.jpg",
-        "https://randomuser.me/api/portraits/women/33.jpg",
-        "https://randomuser.me/api/portraits/women/34.jpg",
-        "https://randomuser.me/api/portraits/women/35.jpg",
-        "https://randomuser.me/api/portraits/women/36.jpg"
+        "https://images.unsplash.com/photo-1628157588553-5eeea00af15c?w=150&h=150&fit=crop", 
+        "https://images.unsplash.com/photo-1595225476474-87563907a212?w=150&h=150&fit=crop", 
+        "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=150&h=150&fit=crop", 
+        "https://images.unsplash.com/photo-1623039467683-16a24682c3c6?w=150&h=150&fit=crop", 
+        "https://images.unsplash.com/photo-1589156280159-27698a70f29e?w=150&h=150&fit=crop", 
+        "https://images.unsplash.com/photo-1616701548604-0c2d3080c985?w=150&h=150&fit=crop", 
+        "https://images.unsplash.com/photo-1583391733958-3d2319f63556?w=150&h=150&fit=crop", 
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop", 
+        "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=150&h=150&fit=crop", 
+        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop", 
+        "https://images.unsplash.com/photo-1554151228-14d9def656ec?w=150&h=150&fit=crop", 
+        "https://images.unsplash.com/photo-1552699175-19e3427503f8?w=150&h=150&fit=crop", 
+        "https://images.unsplash.com/photo-1614283233556-f35b0c801ef1?w=150&h=150&fit=crop", 
+        "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=150&h=150&fit=crop", 
+        "https://images.unsplash.com/photo-1596502209778-f71f6540c4a4?w=150&h=150&fit=crop"
     ];
     
     dummyNames.forEach((name, index) => {
         let dummyChar = {
             id: 100 + index,
             name: name,
-            // Use the photo from our list, or a default if list runs out
-            img: dummyPhotos[index] || "", 
+            img: dummyPhotos[index] || "https://ui-avatars.com/api/?name=" + name, 
             tagline: "🔒 VIP Access Only"
         };
         createCharItem(dummyChar, true);
@@ -312,7 +315,6 @@
         const div = document.createElement('div');
         div.className = isLocked ? 'char-item locked' : 'char-item';
         
-        // Use the realistic photo, with UI Avatar as fallback
         div.innerHTML = `
             <img src="${char.img}" onerror="this.src='https://ui-avatars.com/api/?name=${char.name}&background=random'">
             <div class="char-info">
@@ -342,7 +344,7 @@
     function selectCharacter(char, element) {
         currentCharacter = char;
         chatHistory = [];
-        messageCount = 0; 
+        messageCount = 0; // Reset count for new chat
         
         document.querySelectorAll('.char-item').forEach(c => c.classList.remove('active'));
         if(element) element.classList.add('active');
@@ -369,7 +371,7 @@
         // --- AD TRIGGER LOGIC (Fake Connection Error) ---
         if (messageCount > 0 && messageCount % AD_INTERVAL === 0) {
             document.getElementById('ad-modal').style.display = 'flex';
-            return; 
+            return; // Stop and wait for "Reconnect"
         }
 
         const inputField = document.getElementById('user-input');
@@ -409,6 +411,7 @@
 
         } catch (error) {
             console.error(error);
+            // Real connection error fallback
             addMessage("Network Error. Please try again.", 'system');
         } finally {
             document.getElementById('typing-indicator').style.display = 'none';
@@ -427,9 +430,16 @@
 
     // --- FAKE RECONNECT FUNCTION (Opens Ad) ---
     function reconnectChat() {
+        // Open the ad in new tab
         window.open(MONETAG_DIRECT_LINK, '_blank'); 
+        
+        // Hide modal
         document.getElementById('ad-modal').style.display = 'none';
+        
+        // Simulate "Reconnecting..."
         addMessage("Reconnected successfully! ✅", 'system');
+        
+        // Increment count so it doesn't trigger immediately again
         messageCount++; 
     }
 
